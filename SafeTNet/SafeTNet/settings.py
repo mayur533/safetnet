@@ -124,7 +124,7 @@ is_render_internal = database_url and ('.internal' in database_url)
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgresql://safetnet_xcfb_user:WUNcLHaZUEeC7OauMEpf9cOpD0NYyBL1@dpg-d4a5huali9vc73fbrko0-a.oregon-postgres.render.com/safetnet_xcfb",
+        default="",
         conn_max_age=600,
         ssl_require=not (is_local_db or is_render_internal) if database_url else True,
     )
