@@ -14,7 +14,11 @@ from pathlib import Path
 from decouple import config
 import os
 import dj_database_url
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError:
+    def load_dotenv(*_args, **_kwargs):
+        return None
 
 load_dotenv()
 
@@ -120,7 +124,7 @@ is_render_internal = database_url and ('.internal' in database_url)
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgresql://safetnet_user:DENcxAFMheNUNIIlqQIPUijBc7NvpdZT@dpg-d3jks395pdvs73eh0500-a.oregon-postgres.render.com:5432/safetnet",
+        default="",
         conn_max_age=600,
         ssl_require=not (is_local_db or is_render_internal) if database_url else True,
     )

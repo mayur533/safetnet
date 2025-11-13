@@ -1,0 +1,700 @@
+{
+  "info": {
+    "name": "SafeTNet Admin Panel API",
+    "description": "Complete API collection for SafeTNet Main Admin Panel with Alerts and Reports",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"StrongPass123!\",\n  \"first_name\": \"New\",\n  \"last_name\": \"User\",\n  \"role\": \"USER\",\n  \"organization\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', response.access);",
+                  "    pm.collectionVariables.set('refresh_token', response.refresh);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"testpass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login", ""]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh", ""]
+            }
+          }
+        },
+        {
+          "name": "User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/profile/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile", ""]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Organizations",
+      "item": [
+        {
+          "name": "List Organizations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/organizations/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "organizations", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Organization",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Organization\",\n  \"description\": \"A new organization for testing\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/organizations/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "organizations", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Organization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/organizations/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "organizations", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Organization",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Organization\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/organizations/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "organizations", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Organization",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/organizations/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "organizations", "1", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sub-Admins",
+      "item": [
+        {
+          "name": "List Sub-Admins",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/subadmins/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "subadmins", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Sub-Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newsubadmin\",\n  \"email\": \"subadmin@example.com\",\n  \"password\": \"StrongPass123!\",\n  \"first_name\": \"Sub\",\n  \"last_name\": \"Admin\",\n  \"organization\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/subadmins/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "subadmins", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Sub-Admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/subadmins/2/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "subadmins", "2", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Sub-Admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"updatedsubadmin\",\n  \"email\": \"updated@example.com\",\n  \"first_name\": \"Updated\",\n  \"last_name\": \"Admin\",\n  \"organization\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/subadmins/2/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "subadmins", "2", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Sub-Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/subadmins/2/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "subadmins", "2", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Geofences",
+      "item": [
+        {
+          "name": "List Geofences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/geofences/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "geofences", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Geofence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Geofence\",\n  \"description\": \"A new geofence for testing\",\n  \"latitude\": 40.7128,\n  \"longitude\": -74.0060,\n  \"radius\": 100,\n  \"active\": true,\n  \"organization\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/geofences/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "geofences", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Geofence",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/geofences/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "geofences", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Geofence",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Geofence\",\n  \"description\": \"Updated description\",\n  \"latitude\": 40.7128,\n  \"longitude\": -74.0060,\n  \"radius\": 150,\n  \"active\": true,\n  \"organization\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/geofences/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "geofences", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Geofence",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/geofences/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "geofences", "1", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/users/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "users", ""]
+            }
+          }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/users/4/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "users", "4", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "List Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", ""]
+            }
+          }
+        },
+        {
+          "name": "List Alerts with Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/?severity=HIGH&is_resolved=false",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", ""],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "HIGH"
+                },
+                {
+                  "key": "is_resolved",
+                  "value": "false"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Alert\",\n  \"description\": \"This is a test alert\",\n  \"alert_type\": \"GEOFENCE_ENTER\",\n  \"severity\": \"MEDIUM\",\n  \"geofence\": 1,\n  \"user\": 4,\n  \"metadata\": {\n    \"test\": true,\n    \"source\": \"api\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Alert",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Alert",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Alert\",\n  \"description\": \"Updated description\",\n  \"alert_type\": \"GEOFENCE_ENTER\",\n  \"severity\": \"HIGH\",\n  \"geofence\": 1,\n  \"user\": 4,\n  \"metadata\": {\n    \"updated\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Resolve Alert",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_resolved\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Alert",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/alerts/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "alerts", "1", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "List Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/reports/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "reports", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Report\",\n  \"description\": \"This is a test report\",\n  \"report_type\": \"GEOFENCE_ANALYTICS\",\n  \"date_range_start\": \"2024-01-01T00:00:00Z\",\n  \"date_range_end\": \"2024-01-31T23:59:59Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/reports/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "reports", ""]
+            }
+          }
+        },
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_type\": \"GEOFENCE_ANALYTICS\",\n  \"date_range_start\": \"2024-01-01T00:00:00Z\",\n  \"date_range_end\": \"2024-01-31T23:59:59Z\",\n  \"title\": \"Generated Report\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reports/generate/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reports", "generate", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/reports/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "reports", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Download Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/reports/1/download/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reports", "1", "download", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Report",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/admin/reports/1/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "reports", "1", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard KPIs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/dashboard-kpis/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "dashboard-kpis", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Documentation",
+      "item": [
+        {
+          "name": "OpenAPI Schema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema/",
+              "host": ["{{base_url}}"],
+              "path": ["schema", ""]
+            }
+          }
+        },
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/docs/",
+              "host": ["{{base_url}}"],
+              "path": ["docs", ""]
+            }
+          }
+        },
+        {
+          "name": "ReDoc",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/redoc/",
+              "host": ["{{base_url}}"],
+              "path": ["redoc", ""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

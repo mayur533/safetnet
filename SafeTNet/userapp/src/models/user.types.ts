@@ -6,6 +6,7 @@ export interface User {
   role: string;
   avatar?: string;
   status: 'online' | 'offline';
+  plan?: 'free' | 'premium';
 }
 
 export interface Alert {

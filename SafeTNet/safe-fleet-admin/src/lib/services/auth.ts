@@ -68,13 +68,41 @@ export const authService = {
       body: JSON.stringify(loginData),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Login failed');
+    const contentType = response.headers.get('content-type') || '';
+    const parseAsJson = contentType.includes('application/json');
+    let payload: unknown = null;
+
+    try {
+      payload = parseAsJson ? await response.json() : await response.text();
+    } catch (error) {
+      payload = null;
     }
 
-    const data = await response.json();
+    if (!response.ok) {
+      const message =
+        typeof payload === 'object' && payload !== null
+          ? (payload as { detail?: string; error?: string }).detail || (payload as { error?: string }).error
+          : typeof payload === 'string' && payload.length
+            ? payload.slice(0, 200)
+            : 'Login failed';
+      throw new Error(message || 'Login failed');
+    }
+
+    if (!payload || typeof payload !== 'object') {
+      throw new Error('Unexpected response from server. Please try again later.');
+    }
+
+    const parsed = payload as Partial<AuthResponse>;
+    if (!parsed.access || !parsed.refresh || !parsed.user) {
+      throw new Error('Unexpected response from server. Please try again later.');
+    }
     
+    const data: AuthResponse = {
+      access: parsed.access,
+      refresh: parsed.refresh,
+      user: parsed.user,
+    };
+
     // Store tokens based on rememberMe preference
     const storage = getStorage(rememberMe);
     if (typeof window !== 'undefined') {

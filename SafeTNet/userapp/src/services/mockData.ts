@@ -8,6 +8,7 @@ export const mockUser: User = {
   role: 'User',
   status: 'online',
   avatar: 'https://i.pravatar.cc/150?img=12',
+  plan: 'free',
 };
 
 export const mockAlerts: Alert[] = [

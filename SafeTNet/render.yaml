@@ -1,5 +1,4 @@
 services:
-  # Backend Service (Django)
   - type: web
     name: safetnet-backend
     runtime: python
@@ -11,9 +10,9 @@ services:
       pip install -r requirements.txt
     startCommand: |
       source venv/bin/activate
-      python manage.py migrate
+      python manage.py migrate --noinput
       python manage.py collectstatic --noinput
-      gunicorn SafeTNet.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 120
+      gunicorn SafeTNet.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: SafeTNet.settings
@@ -23,7 +22,11 @@ services:
         value: postgresql://safetnet_user:DENcxAFMheNUNIIlqQIPUijBc7NvpdZT@dpg-d3jks395pdvs73eh0500-a.oregon-postgres.render.com:5432/safetnet
         # Using External Database URL with explicit port
         # If internal URL doesn't work, external URL should resolve properly
-        # Ensure SSL is enabled for external connections (handled in settings.py)
     autoDeploy: true
     healthCheckPath: /api/auth/test-auth/
 
+databases:
+  # Primary PostgreSQL database for Django
+  - name: safetnet-db
+    plan: starter
+    ipAllowList: []
