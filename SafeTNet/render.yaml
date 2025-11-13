@@ -1,4 +1,5 @@
 services:
+  # Backend Service (Django)
   - type: web
     name: safetnet-backend
     runtime: python
