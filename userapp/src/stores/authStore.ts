@@ -9,13 +9,23 @@ interface AuthState {
   logout: () => void;
 }
 
+// Sample user credentials for testing
+const SAMPLE_EMAIL = 'user@example.com';
+const SAMPLE_PASSWORD = 'password123';
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-            login: async (email: string, password: string) => {
-            await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
-            set({user: mockUser, isAuthenticated: true});
-          },
+  login: async (email: string, password: string) => {
+    await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
+    
+    // Validate credentials
+    if (email === SAMPLE_EMAIL && password === SAMPLE_PASSWORD) {
+      set({user: mockUser, isAuthenticated: true});
+    } else {
+      throw new Error('Invalid email or password');
+    }
+  },
   logout: () => {
     set({user: null, isAuthenticated: false});
   },

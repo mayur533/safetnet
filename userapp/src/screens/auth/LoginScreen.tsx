@@ -16,8 +16,9 @@ import {useAuthStore} from '../../stores/authStore';
 import {useNavigation} from '@react-navigation/native';
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // Pre-fill with sample credentials
+  const [email, setEmail] = useState('user@example.com');
+  const [password, setPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<{message: string; type: 'validation' | 'critical'} | null>(null);
@@ -53,8 +54,8 @@ const LoginScreen = () => {
   };
 
   const handleSkip = () => {
-    // Navigate to onboarding screen
-    navigation.navigate('Onboarding');
+    // Navigate to How It Works screen
+    navigation.navigate('HowItWorks');
   };
 
   return (

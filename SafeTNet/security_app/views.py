@@ -182,24 +182,23 @@ class CaseViewSet(OfficerOnlyMixin, viewsets.ModelViewSet):
 
 
 class NavigationView(OfficerOnlyMixin, APIView):
-    def post(self, request):
+    def get(self, request):
         """
-        Calculate route from officer location to target coordinates
-        Expected input: {"from_lat": 18.5204, "from_lng": 73.8567, "to_lat": 18.5310, "to_lng": 73.8440}
+        Calculate route from officer location to target coordinates using GET parameters.
+        Example: /api/navigation/?from_lat=18.5204&from_lng=73.8567&to_lat=18.5310&to_lng=73.8440
         """
         try:
-            from_lat = float(request.data.get('from_lat'))
-            from_lng = float(request.data.get('from_lng'))
-            to_lat = float(request.data.get('to_lat'))
-            to_lng = float(request.data.get('to_lng'))
-        except (TypeError, ValueError, KeyError):
+            from_lat = float(request.query_params.get('from_lat'))
+            from_lng = float(request.query_params.get('from_lng'))
+            to_lat = float(request.query_params.get('to_lat'))
+            to_lng = float(request.query_params.get('to_lng'))
+        except (TypeError, ValueError):
             return Response({
                 'error': 'Invalid or missing coordinates. Expected: from_lat, from_lng, to_lat, to_lng'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Get route information from Google Maps API
         route_data = self._get_route_from_google_maps(from_lat, from_lng, to_lat, to_lng)
-        
+
         if route_data.get('error'):
             return Response(route_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -210,15 +209,11 @@ class NavigationView(OfficerOnlyMixin, APIView):
         })
 
     def _get_route_from_google_maps(self, from_lat, from_lng, to_lat, to_lng):
-        """
-        Get route information from Google Maps Directions API
-        """
         import requests
         from django.conf import settings
-        
+
         api_key = getattr(settings, 'GOOGLE_MAPS_API_KEY', None)
         if not api_key:
-            # Fallback to haversine calculation if no API key
             return self._get_fallback_route(from_lat, from_lng, to_lat, to_lng)
 
         url = "https://maps.googleapis.com/maps/api/directions/json"
@@ -226,7 +221,7 @@ class NavigationView(OfficerOnlyMixin, APIView):
             'origin': f"{from_lat},{from_lng}",
             'destination': f"{to_lat},{to_lng}",
             'key': api_key,
-            'mode': 'driving',  # Can be changed to 'walking', 'bicycling', 'transit'
+            'mode': 'driving',
             'units': 'metric'
         }
 
@@ -240,15 +235,11 @@ class NavigationView(OfficerOnlyMixin, APIView):
 
             route = data['routes'][0]
             leg = route['legs'][0]
-            
-            # Extract polyline
+
             polyline = route['overview_polyline']['points']
-            
-            # Extract distance and duration
-            distance_km = leg['distance']['value'] / 1000  # Convert meters to km
-            duration_minutes = leg['duration']['value'] / 60  # Convert seconds to minutes
-            
-            # Extract step-by-step directions
+            distance_km = leg['distance']['value'] / 1000
+            duration_minutes = leg['duration']['value'] / 60
+
             steps = []
             for step in leg['steps']:
                 steps.append({
@@ -272,17 +263,15 @@ class NavigationView(OfficerOnlyMixin, APIView):
 
     def _get_fallback_route(self, from_lat, from_lng, to_lat, to_lng):
         """
-        Fallback route calculation using haversine distance when Google Maps API is not available
+        Fallback route calculation using haversine distance if Google Maps API is unavailable.
         """
-        distance_km = haversine_distance_km(from_lat, from_lng, to_lat, to_lng)
-        
-        # Estimate ETA based on average driving speed (40 km/h)
+        distance_km = self.haversine_distance_km(from_lat, from_lng, to_lat, to_lng)
         eta_minutes = round((distance_km / 40.0) * 60) if distance_km else 0
-        
+
         return {
             'distance_km': round(distance_km, 2),
             'duration_minutes': eta_minutes,
-            'polyline': None,  # No polyline available without API
+            'polyline': None,
             'steps': [
                 'Head towards target using best available route',
                 'Follow primary roads',
@@ -292,6 +281,17 @@ class NavigationView(OfficerOnlyMixin, APIView):
             'note': 'Route calculated using straight-line distance. For detailed directions, configure Google Maps API key.'
         }
 
+    @staticmethod
+    def haversine_distance_km(lat1, lon1, lat2, lon2):
+        import math
+        R = 6371  # Earth radius in km
+        phi1 = math.radians(lat1)
+        phi2 = math.radians(lat2)
+        delta_phi = math.radians(lat2 - lat1)
+        delta_lambda = math.radians(lon2 - lon1)
+        a = math.sin(delta_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        return R * c
 
 class IncidentsView(OfficerOnlyMixin, APIView, PageNumberPagination):
     page_size_query_param = 'page_size'

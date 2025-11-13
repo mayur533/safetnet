@@ -118,17 +118,25 @@ WSGI_APPLICATION = "SafeTNet.wsgi.application"
 #   If not set, falls back to the hardcoded Render database URL below
 
 # Check if we're using a local or Render internal database (no SSL)
-database_url = os.environ.get('DATABASE_URL', '')
+database_url = config('DATABASE_URL', default='')
 is_local_db = database_url and ('localhost' in database_url or '127.0.0.1' in database_url)
 is_render_internal = database_url and ('.internal' in database_url)
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default="",
-        conn_max_age=600,
-        ssl_require=not (is_local_db or is_render_internal) if database_url else True,
-    )
-}
+if database_url:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            database_url,
+            conn_max_age=600,
+            ssl_require=not (is_local_db or is_render_internal),
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
