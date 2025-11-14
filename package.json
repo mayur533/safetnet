@@ -11,7 +11,7 @@
     "start:backend": "node start-backend.js",
     "start:frontend": "cd safe-fleet-admin && npm run dev",
     "dev": "npm run start",
-    "clean": "rimraf SafeTNet/venv SafeTNet/__pycache__ safe-fleet-admin/node_modules safe-fleet-admin/.next"
+    "clean": "rimraf safetnet/venv safetnet/__pycache__ safe-fleet-admin/node_modules safe-fleet-admin/.next"
   },
   "keywords": [
     "security",

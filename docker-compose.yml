@@ -33,7 +33,7 @@ services:
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              python manage.py loaddata initial_data.json &&
-             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 SafeTNet.wsgi:application"
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 safetnet.wsgi:application"
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -81,7 +81,7 @@ services:
 
   celery:
     build: .
-    command: celery -A SafeTNet worker --loglevel=info
+    command: celery -A safetnet worker --loglevel=info
     volumes:
       - .:/app
       - logs_volume:/app/logs
@@ -98,14 +98,14 @@ services:
       - db
       - redis
     healthcheck:
-      test: ["CMD", "celery", "-A", "SafeTNet", "inspect", "ping"]
+      test: ["CMD", "celery", "-A", "safetnet", "inspect", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
 
   celery-beat:
     build: .
-    command: celery -A SafeTNet beat --loglevel=info
+    command: celery -A safetnet beat --loglevel=info
     volumes:
       - .:/app
       - logs_volume:/app/logs

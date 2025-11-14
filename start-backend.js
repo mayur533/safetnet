@@ -11,7 +11,7 @@ const isWindows = platform === 'win32';
 
 console.log('🚀 Starting Safe T Net Backend...\n');
 
-const backendPath = path.join(__dirname, 'SafeTNet');
+const backendPath = __dirname;
 const venvPath = path.join(backendPath, 'venv');
 
 // Determine the command based on platform
