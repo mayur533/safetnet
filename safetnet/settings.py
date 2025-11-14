@@ -83,7 +83,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "SafeTNet.urls"
+ROOT_URLCONF = "safetnet.urls"
 
 TEMPLATES = [
     {
@@ -101,7 +101,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "SafeTNet.wsgi.application"
+WSGI_APPLICATION = "safetnet.wsgi.application"
 
 
 # Database
